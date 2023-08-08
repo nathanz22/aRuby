@@ -1,6 +1,6 @@
 # Ler dois números e dizer a soma entre eles.
 
-puts '=' * 85
+puts ' Exercício 003 '.center(85, '=-')
 
 print 'Digite um número: '
 n1 = Integer(gets.chomp)
@@ -9,4 +9,4 @@ n2 = Integer(gets.chomp)
 
 puts "A soma entre #{n1} e #{n2} é #{n1 + n2}"
 
-puts '=' * 85
+puts ''.center(85, '=-')

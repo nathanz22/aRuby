@@ -1,1 +1,0 @@
-calc = proc { |n| puts  }
