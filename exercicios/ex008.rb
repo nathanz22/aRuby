@@ -5,8 +5,8 @@ puts '=' * 85
 print 'Digite um número: '
 num = Integer(gets.chomp)
 
-10.times do |c|
-  puts "| #{num} x #{format('%2d', c + 1)} = #{format('%2d', num * (c + 1))} |"
-end
+tabuada = proc { |c| puts "| #{num} x #{format('%2d', c + 1)} = #{format('%2d', num * (c + 1))} |" }
+
+10.times(&tabuada)
 
 puts '=' * 85
