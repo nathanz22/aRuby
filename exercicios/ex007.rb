@@ -13,6 +13,7 @@ rescue Interrupt
   exit
 else
   puts "\nMetro: #{m} | Centímetro: #{m * 100} | Milímetro: #{m * 1000}"
+  break
 end
 
 puts ''.center(85, '=-')
