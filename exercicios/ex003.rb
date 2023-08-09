@@ -10,6 +10,8 @@ def input(msg)
     puts 'ERRO | O valor deve ser um número inteiro'
   rescue Interrupt
     puts "\nINTERRUPÇÃO | O usuário preferiu interromper"
+    puts ''.center(85, '=-')
+    exit
   else
     return num
   end
