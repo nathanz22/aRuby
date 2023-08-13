@@ -1,6 +1,6 @@
 # Conversor de Temperaturas
 
-puts ' Exercício 12 '.center(85, '=-')
+puts ' Exercício 012 '.center(85, '=-')
 
 # --- Celsius para Fahrenheit ---
 def c_to_f(celsius)
@@ -102,6 +102,11 @@ while c # Executará o programa até o usuário decidir encerrá-lo ao final
     print 'Deseja encerrar? [S/N]: '
     choice = String(gets.chomp).strip.upcase
     puts '-' * 30
+  rescue Interrupt # Caso o usuário interrompa antes de digitar algo
+    puts "\n\e[33mINTERRUPÇÃO | O usuário preferiu interromper\e[0m"
+    puts ''.center(85, '=-')
+    exit
+  else # Caso o usuário não interrompa
     case choice
     when 'S' # Encerra o programa
       puts "\e[33mENCERRAMENTO | Até mais!\e[0m"
