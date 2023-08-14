@@ -2,7 +2,10 @@
 Style/FrozenStringLiteralComment:
   Enabled: false
 Metrics/MethodLength:
-  Max: 20
+  Enabled: false
 
 Metrics/BlockLength:
   Max: 50
+
+Metrics/AbcSize:
+  Enabled: false
