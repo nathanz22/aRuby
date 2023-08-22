@@ -1,7 +1,19 @@
-# Imprimir "Olá, Mundo!" na tela.
+# Exercício 001: Imprimir "Olá, Mundo!" na tela.
 
-puts ' Exercício 001 '.center(85, '=-')
+# Função de classe que imprime 'Olá, Mundo!'
+def ola_mundo
+  'Olá, Mundo!'
+end
 
-puts 'Olá, Mundo!'
+def print_linha(width)
+  puts ''.center(width, '=-')
+end
 
-puts ''.center(85, '=-')
+# Programa principal
+def main
+  print_linha(50)
+  puts ola_mundo.center(50, ' ')
+  print_linha(50)
+end
+
+main # Chama o programa principal
