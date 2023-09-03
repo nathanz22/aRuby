@@ -2,12 +2,14 @@
 
 # Classe Hipotenusa
 class Hipotenusa
+  # Bloco a ser executado quando o usuário interromper o script
   @interrupcao = proc do
     puts "\n\e[33mINTERRUPÇÃO | O usuário preferiu interromper.\e[0m"
     linha
     exit # Encerra o script neste ponto
   end
 
+  # Pede ao usuário o valor de um cateto
   def self.input_cateto(msg)
     loop do
       print msg
@@ -61,8 +63,6 @@ class Hipotenusa
       @interrupcao.call
     end
   end
-
-  # Em caso de interrupção do usuário
 end
 
 # Código principal
