@@ -2,9 +2,9 @@
 
 # Caixa de ferramentas
 class Toolbox
-  # Bloco a ser chamado quando o usuário interromper o script
-  @interrupcao = proc do
-    puts "\e[33mINTERRUPÇÃO | O usuário preferiu interromper\e[0m"
+  # Quando o usuário interromper o script
+  INTERRUPCAO = proc do
+    puts "\n\e[33mINTERRUPÇÃO | O usuário preferiu interromper\e[0m"
     linha
     exit # Encerra o script
   end
@@ -37,13 +37,18 @@ class Toolbox
         puts "\e[31mERRO | Opção inválida! Digite \"S\" para SIM ou \"N\" para NÃO\e[0m"
       end
     rescue Interrupt # Caso o usuário force a interrupção do script
-      @interrupcao.call
+      INTERRUPCAO.call
     end
   end
 end
 
 # Classe Conversor
 class Conversor < Toolbox
+  require 'httparty'
+  require 'json'
+  include HTTParty
+  base_uri 'https://economia.awesomeapi.com.br/json'
+
   # Pede um valor monetário ao usuário
   def self.input_valor(msg)
     loop do
@@ -53,18 +58,32 @@ class Conversor < Toolbox
     rescue ArgumentError # Caso o usuário digite um valor inválido
       puts "\e[31mERRO | Digite um valor monetário válido\e[0m"
     rescue Interrupt # Caso o usuário force a interrupção do script
-      @interrupcao.call
+      INTERRUPCAO.call
+    end
+  end
+
+  # Obtém a taxa de câmbio
+  def self.taxa_de_cambio(from_currency, to_currency)
+    response = get("/daily/#{from_currency}-#{to_currency}/1")
+
+    if response.code == 200
+      exchange_data = JSON.parse(response.body).first
+      exchange_data['high'].to_f
+    else
+      puts "\e[31mERRO | Ocorreu um erro ao tentar obter a taxa de câmbio\e[0m"
     end
   end
 
   # Converte para dólar
   def self.dolar(valor)
-    valor * 0.2025
+    exchange_rate = taxa_de_cambio('BRL', 'USD')
+    valor * exchange_rate
   end
 
   # Converte para Euro
   def self.euro(valor)
-    valor * 0.1876
+    exchange_rate = taxa_de_cambio('BRL', 'EUR')
+    valor * exchange_rate
   end
 end
 
@@ -74,13 +93,17 @@ def main
   while continue
     Conversor.linha(50, ' Conversor Monetário ')
     valor = Conversor.input_valor 'Valor a ser convertido: R$'
+
     dolar = Conversor.dolar valor
     euro = Conversor.euro valor
 
-    puts "Valor: R$#{format('%.2f', valor)} | Dólar: $#{format('%.2f', dolar)} | Euro: €#{format('%.2f', euro)}"
+    Conversor.linha 30
+    puts "Valor: \e[34mR$#{format('%.2f', valor)}\e[0m"
+    puts "Dólar: \e[32m$#{format('%.2f', dolar)}\e[0m"
+    puts "Euro: \e[32m€#{format('%.2f', euro)}\e[0m"
     continue = Conversor.continuar?
-    Conversor.linha
   end
+  Conversor.linha
 end
 
 main # Chama o código principal
