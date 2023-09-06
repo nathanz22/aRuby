@@ -87,7 +87,7 @@ class Conversor < Toolbox
   def self.euro(valor)
     exchange_rate = taxa_de_cambio('BRL', 'EUR')
     valor * exchange_rate
-  rescue Exception => e
+  rescue SocketError
     puts "\e[31mERRO | Ocorreu um erro ao tentar obter a taxa de câmbio, verifique sua conexão\e[0m"
     linha
     exit
