@@ -65,7 +65,6 @@ class Conversor < Toolbox
   # Obtém a taxa de câmbio
   def self.taxa_de_cambio(from_currency, to_currency)
     response = get("/daily/#{from_currency}-#{to_currency}/1")
-
     if response.code == 200
       exchange_data = JSON.parse(response.body).first
       exchange_data['high'].to_f
@@ -78,12 +77,20 @@ class Conversor < Toolbox
   def self.dolar(valor)
     exchange_rate = taxa_de_cambio('BRL', 'USD')
     valor * exchange_rate
+  rescue SocketError
+    puts "\e[31mERRO | Ocorreu um erro ao tentar obter a taxa de câmbio, verifique sua conexão\e[0m"
+    linha
+    exit
   end
 
   # Converte para Euro
   def self.euro(valor)
     exchange_rate = taxa_de_cambio('BRL', 'EUR')
     valor * exchange_rate
+  rescue Exception => e
+    puts "\e[31mERRO | Ocorreu um erro ao tentar obter a taxa de câmbio, verifique sua conexão\e[0m"
+    linha
+    exit
   end
 end
 
