@@ -51,6 +51,10 @@ class Numero < Toolbox
     loop do
       print msg
       num = Integer(gets.chomp)
+      if num > 999_999 || num <= 0
+        puts "\e[31mERRO | O número deve ser menor que 1 milhão e maior que zero\e[0m"
+        next
+      end
       return num
     rescue ArgumentError # Caso o usuário passe um valor inválido
       puts "\e[31mERRO | Valor deve ser um número inteiro\e[0m"
@@ -59,27 +63,31 @@ class Numero < Toolbox
     end
   end
 
-  # Retorna a unidade de um número
-  def self.unidade(num)
-    Integer(num.to_s[-1]) if num >= 0
-  end
+  # Retorna um Hash com Unidade, Dezena, Centena e Milhar
+  def self.ordem(num)
+    ordem = {}
+    ### Calcula a centena de milhar
+    ordem['Centena de Milhar'] = Integer(num.to_s[-6]) if num >= 100_000
 
-  # Retorna a dezena de um número
-  def self.dezena(num)
-    Integer(num.to_s[-2]) if num >= 10
-  end
+    ### Calcula a dezena de milhar
+    ordem['Dezena de Milhar'] = Integer(num.to_s[-5]) if num >= 10_000
 
-  # Retorna a centena de um número
-  def self.centena(num)
-    Integer(num.to_s[-3]) if num >= 100
-  end
-
-  # Retorna a milhar de um número
-  def self.milhar(num)
-    if String(num).length >= 4 && num < 1_000_000
-      remover = "#{centena(num)}#{dezena(num)}#{unidade(num)}"
-      String(num).sub(remover, '').to_i
+    ### Calcula a milhar/unidade de milhar
+    if num >= 1_000 && num < 10_000
+      ordem['Milhar'] = Integer(num.to_s[-4])
+    elsif num >= 10_000
+      ordem['Unidade de Milhar'] = Integer(num.to_s[-4])
     end
+
+    ### Calcula a centena
+    ordem['Centena'] = Integer(num.to_s[-3]) if num >= 100
+
+    ### Calcula a dezena
+    ordem['Dezena'] = Integer(num.to_s[-2]) if num >= 10
+
+    ### Calcula a unidade
+    ordem['Unidade'] = Integer(num.to_s[-1]) if num >= 0
+    ordem
   end
 end
 
@@ -89,14 +97,10 @@ def main
   while continue
     Numero.linha 70, ' Milhar, centena, dezena e unidade de um número '
     num = Numero.input_int 'Digite um número inteiro: '
-    milhar = Numero.milhar num
-    centena = Numero.centena num
-    dezena = Numero.dezena num
-    unidade = Numero.unidade num
-    puts "Milhar: \t#{milhar}" if milhar
-    puts "Centena: \t#{centena}" if centena
-    puts "Dezena: \t#{dezena}" if dezena
-    puts "Unidade: \t#{unidade}" if unidade
+    ordem = Numero.ordem num
+    ordem.each do |k, v|
+      puts "\e[34m#{k.to_s.ljust(20, ' ')}\e[0m: \e[32m#{v}\e[0m"
+    end
     continue = Numero.continuar?
   end
   Numero.linha
