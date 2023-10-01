@@ -1,4 +1,4 @@
-# Sortear a ordem dos itens da lista
+# Sortear a ordem dos itens de uma lista
 
 # Caixa de ferramentas
 class Toolbox

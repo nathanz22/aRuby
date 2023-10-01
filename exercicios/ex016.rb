@@ -1,4 +1,4 @@
-# Dizer o valor do seno, cosseno e tangente a partir do ângulo escolhido (30°, 45° e 60°)
+# Dizer o valor do seno, cosseno e tangente a partir do ângulo
 
 # Classe Trigonometria
 class Trigonometria

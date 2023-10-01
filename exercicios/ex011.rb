@@ -1,63 +1,116 @@
 # Aumento e desconto em porcentagem.
 
-puts ' Exercício 011 '.center(85, '=-')
+# Caixa de ferramentas
+class Toolbox
+  # Quando o usuário interromper o script
+  INTERRUPCAO = proc do
+    puts "\n\e[33mINTERRUPÇÃO | O usuário preferiu interromper\e[0m"
+    linha
+    exit # Encerra o script
+  end
 
-def input(msg, i_or_f)
-  loop do
-    print msg
-    case i_or_f.upcase
-    when 'I'
-      v = Integer(gets.chomp)
-    when 'F'
-      v = Float(gets.chomp)
+  private_constant :INTERRUPCAO
+
+  # Imprime uma linha personalizada
+  def self.linha(lenght = 50, msg = '')
+    puts msg.center(lenght, '=-')
+  end
+
+  # Limpa o terminal
+  def self.limpar_terminal
+    system('clear') || system('cls') || puts("\e[H\e[2J")
+  end
+
+  # Pergunta ao usuário se ele quer ou não continuar
+  def self.continuar?
+    loop do
+      linha 30
+      print 'Deseja continuar? [S/N]: '
+      choice = String(gets.chomp).strip.upcase
+      linha 30
+      case choice
+      when 'S', 'SIM' # Caso o usuário escolha continuar
+        limpar_terminal
+        return true
+      when 'N', 'NÃO', 'NAO' # Caso o usuário escolha encerrar
+        puts "\e[33mENCERRAMENTO | Até mais!\e[0m"
+        return false
+      else # Caso o usuário tenha digitado alguma opção inválida
+        puts "\e[31mERRO | Opção inválida! Digite \"S\" para SIM ou \"N\" para NÃO\e[0m"
+      end
+    rescue Interrupt # Caso o usuário force a interrupção do script
+      INTERRUPCAO.call
     end
-  rescue ArgumentError
-    puts 'ERRO | Valor inválido!'
-  rescue Interrupt
-    puts "\nINTERRUPÇÃO | O usuário preferiu interromper"
-    puts ''.center(85, '=-')
-    exit
-  else
-    return v
   end
 end
 
-def a_or_d
-  loop do
-    print 'Aumento ou desconto? [A/D]: '
-    choice = String(gets.chomp).strip.upcase
-    if choice != 'A' && choice != 'D'
-      puts 'ERRO | Opção inválida! Digite "A" ou "D"'
-      next
+# Classe AumentoDesconto
+class AumentoDesconto < Toolbox
+  # Pede ao usuário o valor do aumento/desconto e porcentagem
+  def self.input_num(msg, integer_or_float)
+    loop do
+      print msg
+      case integer_or_float.strip.upcase
+      when 'I' then v = Integer(gets.chomp)
+      when 'F' then v = Float(gets.chomp)
+      end
+      return v
+    rescue ArgumentError # Caso seja passado um valor inválido
+      if integer_or_float.upcase == 'I'
+        puts "\e[31mERRO | Valor deve ser um número inteiro\e[0m"
+      else
+        puts "\e[31mERRO | Valor deve ser um número\e[0m"
+      end
+    rescue Interrupt # Caso o usuário force a interrupção do script
+      INTERRUPCAO.call
     end
-  rescue Interrupt
-    puts "\nINTERRUPÇÃO | O usuário preferiu interromper"
-    puts ''.center(85, '=-')
-    exit
-  else
-    return choice
+  end
+
+  # Escolha de aumento ou desconto
+  def self.aumento_ou_desconto
+    loop do
+      print 'Aumento ou desconto? [A/D]: '
+      choice = String(gets.chomp).strip.upcase
+      if choice != 'A' && choice != 'D'
+        puts "\e[31mERRO | Opção inválida! Digite \"A\" ou \"D\"\e[0m"
+        next
+      end
+      return choice
+    rescue Interrupt # Caso o usuário force a interrupção do script
+      INTERRUPCAO.call
+    end
   end
 end
 
-choice = a_or_d
+# Código principal
+def main
+  continue = true
+  while continue
+    AumentoDesconto.linha 50, ' Aumento e Desconto '
+    choice = AumentoDesconto.aumento_ou_desconto
+    valor = AumentoDesconto.input_num 'Valor: R$', 'f'
+    case choice
+    when 'A'
+      porcentagem_aumento = AumentoDesconto.input_num 'Valor para aumento (%): ', 'i'
+      aumento = valor * porcentagem_aumento / 100
+      novo_valor = valor + aumento
 
-case choice
-when 'A'
-  v = input('Valor: R$', 'f')
-  va = input('Valor para aumento (%): ', 'I')
+      puts "\n - Valor: \e[34mR$#{format('%.2f', valor)}\e[0m | Aumento: \e[34m#{porcentagem_aumento}%\e[0m"
+      puts " - O valor já com aumento é \e[32mR$#{format('%.2f', novo_valor)}\e[0m"
+    when 'D'
+      porcentagem_desconto = AumentoDesconto.input_num 'Valor para desconto (%): ', 'i'
+      desconto = valor * porcentagem_desconto / 100
+      novo_valor = valor - desconto
 
-  a1 = v * va / 100
-  a2 = v + a1
-  puts "\n - Valor: R$#{format('%.2f', v)} | Aumento: #{va}%\n - O valor já com o aumento é R$#{format('%.2f', a2)}"
-when 'D'
-  v = input('Valor: R$', 'F')
-  vd = input('Valor para desconto (%): ', 'I')
+      puts "\n - Valor: \e[34mR$#{format('%.2f', valor)}\e[0m | Desconto: \e[34m#{porcentagem_desconto}%\e[0m"
+      puts " - O valor já com desconto é \e[32mR$#{format('%.2f', novo_valor)}\e[0m"
+    else
+      puts "\e[31mERRO | Opção digitada é INVÁLIDA!\e[0m"
+    end
 
-  d1 = v * vd / 100
-  d2 = v - d1
-  puts "\n - Valor: R$#{format('%.2f', v)} | Desconto: #{vd}%\n - O valor já com o desconto é R$#{format('%.2f', d2)}"
-else
-  puts 'ERRO | Opção digitada é INVÁLIDA!'
+    continue = AumentoDesconto.continuar?
+  end
+  AumentoDesconto.linha
 end
 
-puts ''.center(85, '=-')
+main # Chama o código principal
