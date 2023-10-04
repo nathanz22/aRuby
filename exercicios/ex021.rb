@@ -11,11 +11,6 @@ class Toolbox
 
   private_constant :INTERRUPCAO
 
-  # Executa a constante INTERRUPCAO
-  def self.interrupcao
-    INTERRUPCAO.call
-  end
-
   # Imprime uma linha personalizada
   def self.linha(lenght = 50, msg = '')
     puts msg.center(lenght, '=-')
